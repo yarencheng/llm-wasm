@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemma 3 Web LLM - On-Device AI</title>
+    <meta name="description" content="On-device LLM inference using MediaPipe and Gemma 3 E2B. Powered by WebGPU.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <span class="gradient-text">Gemma 3</span>
+                <span class="badge">WebGPU</span>
+            </div>
+            <div id="status" class="status-indicator loading">
+                <span class="dot"></span>
+                <span class="status-text">Initializing...</span>
+            </div>
+        </header>
+
+        <main id="chat-container">
+            <div id="welcome-screen" class="welcome">
+                <h1>Powerful AI, <br><span class="accent">Completely On-Device</span></h1>
+                <p>Run Gemma 3 E2B directly in your browser. Private, secure, and blazing fast.</p>
+                <div class="model-info">
+                    <p>Model: <strong>gemma-3n-E2B-it-int4-Web</strong></p>
+                    <p>Size: 2.8 GB</p>
+                </div>
+                <div id="loading-progress-container" class="progress-container hidden">
+                    <div class="progress-bar-bg">
+                        <div id="loading-progress" class="progress-bar"></div>
+                    </div>
+                    <p id="progress-text">Downloading model weights...</p>
+                </div>
+            </div>
+            <div id="messages" class="messages-list"></div>
+        </main>
+
+        <footer>
+            <div class="input-area">
+                <textarea id="prompt-input" placeholder="Ask anything..." rows="1" disabled></textarea>
+                <button id="send-btn" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+            <p class="disclaimer">Inferences run locally on your GPU. Model files are cached for future use.</p>
+        </footer>
+    </div>
+    <script type="module" src="/main.js"></script>
+</body>
+</html>
