@@ -16,14 +16,14 @@ let llmInference;
 async function initLLM() {
     try {
         progressContainer.classList.remove('hidden');
-        
+
         // Setup WASM fileset
         const genai = await FilesetResolver.forGenAiTasks(
             "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai@latest/wasm"
         );
 
         statusText.textContent = 'Loading model...';
-        
+
         // Initialize inference engine
         llmInference = await LlmInference.createFromOptions(genai, {
             baseOptions: {
@@ -39,12 +39,12 @@ async function initLLM() {
         statusEl.classList.remove('loading');
         statusEl.classList.add('ready');
         statusText.textContent = 'Ready';
-        
+
         progressContainer.classList.add('hidden');
         promptInput.disabled = false;
         sendBtn.disabled = false;
         promptInput.placeholder = "Message Gemma 3...";
-        
+
         console.log("LLM Initialized successfully");
 
     } catch (error) {
@@ -82,7 +82,7 @@ async function sendMessage() {
             assistantMsgEl.textContent = fullResponse;
             // Scroll to bottom
             messagesList.scrollTop = messagesList.scrollHeight;
-            
+
             if (done) {
                 promptInput.disabled = false;
                 sendBtn.disabled = false;
