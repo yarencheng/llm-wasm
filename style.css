@@ -172,7 +172,7 @@ h1 {
     height: 100%;
     width: 0%;
     background: var(--accent-gradient);
-    transition: width 0.3s ease;
+    transition: width 0.1s linear;
 }
 
 #progress-text {
