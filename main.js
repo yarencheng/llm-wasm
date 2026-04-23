@@ -106,19 +106,20 @@ class ModelStorage {
 
 // 1. Initialize the LLM Inference Task
 async function initLLM() {
+    // const modelUrl = '/gemma-3n-E2B-it-int4-Web.litertlm';
     const modelUrl = 'https://pub-d5d788cf21574eb7951b65a7a4f469ac.r2.dev/gemma-3n-E2B-it-int4-Web.litertlm';
-    
+
     try {
         modelStorage = new ModelStorage();
         await modelStorage.init();
 
         const metadata = await modelStorage.getMetadata();
-        
+
         progressContainer.classList.remove('hidden');
-        
+
         let chunks = [];
         let receivedLength = 0;
-        
+
         let headResponse;
         let currentETag = null;
         let totalSize = 0;
@@ -142,9 +143,9 @@ async function initLLM() {
             statusText.textContent = 'Loading from cache...';
             chunks = await modelStorage.getAllChunks();
             receivedLength = totalSize;
-            
+
             progressBar.style.width = `100%`;
-            progressText.textContent = `Loaded from cache: (${Math.round(totalSize/1024/1024)}MB)`;
+            progressText.textContent = `Loaded from cache: (${Math.round(totalSize / 1024 / 1024)}MB)`;
         } else {
             // Check if we can resume
             if (!corsError && metadata && metadata.etag === currentETag) {
@@ -166,7 +167,7 @@ async function initLLM() {
             if (corsError || receivedLength < totalSize) {
                 const fetchOptions = receivedLength > 0 && !corsError ? { headers: { 'Range': `bytes=${receivedLength}-` } } : {};
                 let response;
-                
+
                 try {
                     response = await fetch(modelUrl, fetchOptions);
                 } catch (e) {
@@ -182,7 +183,7 @@ async function initLLM() {
                         throw e;
                     }
                 }
-                
+
                 if (!response.ok && response.status !== 206) {
                     throw new Error(`Failed to fetch model: ${response.statusText}`);
                 }
@@ -193,27 +194,27 @@ async function initLLM() {
                 }
 
                 const reader = response.body.getReader();
-                
-                while(true) {
-                    const {done, value} = await reader.read();
+
+                while (true) {
+                    const { done, value } = await reader.read();
                     if (done) break;
-                    
+
                     // Save chunk to IDB
                     const chunkIndex = chunks.length;
                     chunks.push(value);
                     if (!corsError) {
                         await modelStorage.saveChunk(chunkIndex, value);
                     }
-                    
+
                     receivedLength += value.length;
-                    
+
                     // Update progress bar
                     if (totalSize) {
                         const percent = Math.round((receivedLength / totalSize) * 100);
                         progressBar.style.width = `${percent}%`;
-                        progressText.textContent = `Downloading: ${percent}% (${Math.round(receivedLength/1024/1024)}MB / ${Math.round(totalSize/1024/1024)}MB)`;
+                        progressText.textContent = `Downloading: ${percent}% (${Math.round(receivedLength / 1024 / 1024)}MB / ${Math.round(totalSize / 1024 / 1024)}MB)`;
                     } else {
-                        progressText.textContent = `Downloading: ${Math.round(receivedLength/1024/1024)}MB`;
+                        progressText.textContent = `Downloading: ${Math.round(receivedLength / 1024 / 1024)}MB`;
                     }
                 }
 
@@ -221,13 +222,13 @@ async function initLLM() {
                     await modelStorage.setMetadata({ etag: currentETag, totalSize, complete: true });
                 }
             } else if (!corsError && receivedLength === totalSize) {
-                 await modelStorage.setMetadata({ etag: currentETag, totalSize, complete: true });
+                await modelStorage.setMetadata({ etag: currentETag, totalSize, complete: true });
             }
         }
 
         statusText.textContent = 'Initializing engine...';
         progressText.textContent = 'Loading weights into GPU memory...';
-        
+
         // Setup WASM fileset
         const genai = await FilesetResolver.forGenAiTasks(
             "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai@latest/wasm"
@@ -237,7 +238,7 @@ async function initLLM() {
         // Allocating a 3GB contiguous Uint8Array in JS often fails.
         const modelBlob = new Blob(chunks, { type: 'application/octet-stream' });
         const modelObjectURL = URL.createObjectURL(modelBlob);
-        
+
         // Free up the JS array of chunks to save memory
         chunks = [];
 
@@ -256,17 +257,22 @@ async function initLLM() {
         statusEl.classList.remove('loading');
         statusEl.classList.add('ready');
         statusText.textContent = 'Ready';
-        
-        progressContainer.classList.add('hidden');
+
+        // Keep progress bar but update text as a hint
+        progressBar.style.width = '100%';
+        progressText.textContent = 'Finish start to send message in the below';
+        progressText.style.color = '#00e676'; // Success color
+        progressText.style.fontWeight = '600';
+
         promptInput.disabled = false;
         sendBtn.disabled = false;
         promptInput.placeholder = "Message Gemma 3...";
-        
+
         // Show clear cache button if model is cached
         if (clearCacheBtn) {
             clearCacheBtn.classList.remove('hidden');
         }
-        
+
         console.log("LLM Initialized successfully");
 
     } catch (error) {
@@ -274,7 +280,7 @@ async function initLLM() {
         statusText.textContent = 'Error loading model';
         progressText.textContent = 'Error: ' + error.message;
         progressText.style.color = '#ff5252';
-        
+
         // If clear cache button exists, show it so user can reset if corrupted
         if (clearCacheBtn) {
             clearCacheBtn.classList.remove('hidden');
