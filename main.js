@@ -1,4 +1,6 @@
 import { LlmInference, FilesetResolver } from '@mediapipe/tasks-genai';
+import { marked } from 'https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js';
+
 
 const statusEl = document.getElementById('status');
 const statusText = statusEl.querySelector('.status-text');
@@ -312,7 +314,7 @@ async function sendMessage() {
         // Stream response
         await llmInference.generateResponse(text, (partialResult, done) => {
             fullResponse += partialResult;
-            assistantMsgEl.textContent = fullResponse;
+            assistantMsgEl.innerHTML = marked.parse(fullResponse);
             // Scroll to bottom
             messagesList.scrollTop = messagesList.scrollHeight;
 
@@ -334,7 +336,11 @@ async function sendMessage() {
 function addMessage(text, role) {
     const div = document.createElement('div');
     div.className = `message ${role}`;
-    div.textContent = text;
+    if (role === 'assistant' && text) {
+        div.innerHTML = marked.parse(text);
+    } else {
+        div.textContent = text;
+    }
     messagesList.appendChild(div);
     messagesList.scrollTop = messagesList.scrollHeight;
     return div;

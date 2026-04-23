@@ -228,6 +228,67 @@ h1 {
     border-bottom-left-radius: 4px;
 }
 
+/* Markdown Styles */
+.message.assistant p:not(:last-child) {
+    margin-bottom: 12px;
+}
+
+.message.assistant h1, .message.assistant h2, .message.assistant h3 {
+    margin: 16px 0 8px 0;
+    font-family: var(--font-heading);
+    color: white;
+}
+
+.message.assistant h1 { font-size: 1.5rem; }
+.message.assistant h2 { font-size: 1.3rem; }
+.message.assistant h3 { font-size: 1.1rem; }
+
+.message.assistant ul, .message.assistant ol {
+    margin-bottom: 12px;
+    padding-left: 20px;
+}
+
+.message.assistant li {
+    margin-bottom: 4px;
+}
+
+.message.assistant code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.9em;
+}
+
+.message.assistant pre {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 12px 0;
+    border: 1px solid var(--glass-border);
+}
+
+.message.assistant pre code {
+    background: transparent;
+    padding: 0;
+    display: block;
+    line-height: 1.4;
+}
+
+.message.assistant blockquote {
+    border-left: 3px solid var(--accent-color);
+    padding-left: 16px;
+    margin: 12px 0;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.message.assistant strong {
+    color: white;
+    font-weight: 600;
+}
+
 footer {
     padding: 24px 32px;
     border-top: 1px solid var(--glass-border);
