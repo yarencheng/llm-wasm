@@ -233,18 +233,18 @@ async function initLLM() {
             "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-genai@latest/wasm"
         );
 
-        // Combine chunks into a single Uint8Array
-        const modelBuffer = new Uint8Array(receivedLength);
-        let position = 0;
-        for(let chunk of chunks) {
-            modelBuffer.set(chunk, position);
-            position += chunk.length;
-        }
+        // Create a Blob from the downloaded chunks to prevent OOM errors
+        // Allocating a 3GB contiguous Uint8Array in JS often fails.
+        const modelBlob = new Blob(chunks, { type: 'application/octet-stream' });
+        const modelObjectURL = URL.createObjectURL(modelBlob);
+        
+        // Free up the JS array of chunks to save memory
+        chunks = [];
 
-        // Initialize inference engine using the downloaded buffer
+        // Initialize inference engine using the downloaded blob URL
         llmInference = await LlmInference.createFromOptions(genai, {
             baseOptions: {
-                modelAssetBuffer: modelBuffer
+                modelAssetPath: modelObjectURL
             },
             maxTokens: 1024,
             topK: 40,
