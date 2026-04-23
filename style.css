@@ -277,3 +277,22 @@ button:disabled {
 .hidden {
     display: none;
 }
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    width: auto;
+    height: auto;
+    padding: 8px 16px;
+    font-size: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.secondary-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: none;
+}
