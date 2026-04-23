@@ -346,10 +346,21 @@ promptInput.addEventListener('keydown', (e) => {
 if (clearCacheBtn) {
     clearCacheBtn.addEventListener('click', async () => {
         if (confirm('Are you sure you want to delete the cached model weights? You will need to download them again.')) {
-            if (modelStorage) {
-                await modelStorage.clear();
+            try {
+                if (modelStorage && modelStorage.db) {
+                    modelStorage.db.close();
+                }
+                await new Promise((resolve) => {
+                    const req = indexedDB.deleteDatabase('LLMStorage');
+                    req.onsuccess = resolve;
+                    req.onerror = resolve;
+                    req.onblocked = resolve;
+                });
+            } catch (e) {
+                console.error("Error clearing cache:", e);
+            } finally {
+                location.reload();
             }
-            location.reload();
         }
     });
 }
